@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Transaction = require('./transaction')
+const validator = require('validator')
 
 const productSchema = new mongoose.Schema({
     product_id: {
@@ -16,19 +17,29 @@ const productSchema = new mongoose.Schema({
     quantity_total: {
         type: Number,
         required: true,
-        trim: true
+        trim: true,
+        validate(value) {
+            if (value < 0) {
+                throw new Error('Quantity must be a postive number')
+            }
+        }
     },
     quantity_booked: {
         type: Number,
         required: false,
-        trim: true 
+        trim: true,
+        validate(value) {
+            if (value < 0) {
+                throw new Error('Quantity must be a postive number')
+            }
+        } 
     },
     price: {
         type: String,
         required: true,
         trim: true 
     }
-})
+},{toJSON:{virtuals:true}})
 
 productSchema.virtual('transactions',{
     ref:'Transaction',
