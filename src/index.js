@@ -5,6 +5,7 @@ const ejs = require("ejs");
 const bcrypt = require('bcrypt')
 const User = require('./models/user')
 const bodyParser = require("body-parser");
+const passport = require('passport')
 
 const app = express()
 
@@ -31,6 +32,9 @@ app.post('/register', function(req,res) {
         newUser.save(function(err){
             if(err) {
                 console.log(err)
+                res.render("404", {
+                    error: "Make sure you have not registered before and password doesn't contain 'password'"
+                })
             } else {
                 res.render("home")
             }

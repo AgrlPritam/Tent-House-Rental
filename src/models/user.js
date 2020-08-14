@@ -1,6 +1,7 @@
 require('dotenv').config()
 const mongoose = require('mongoose')
 const validator = require('validator')
+const Customer = require('./customer')
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -31,6 +32,12 @@ const userSchema = new mongoose.Schema({
             }
         }
     }
+})
+
+userSchema.virtual('customers',{
+    ref:'Customer',
+    localField:'name',
+    foreignField:'customer_name'
 })
 
 
