@@ -9,7 +9,7 @@ const customerSchema = new mongoose.Schema({
         unique: true
     },
     customer_name: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String || mongoose.Schema.Types.ObjectId,
         required:true,
         ref: 'User'
     }

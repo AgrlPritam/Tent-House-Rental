@@ -27,6 +27,7 @@ const productSchema = new mongoose.Schema({
     quantity_booked: {
         type: Number,
         required: false,
+        default: 0,
         trim: true,
         validate(value) {
             if (value < 0) {

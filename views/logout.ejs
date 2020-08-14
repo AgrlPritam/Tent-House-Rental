@@ -1,0 +1,18 @@
+<%- include('partials/header') %>
+
+<h2>Are you sure you want to logout?</h2>
+<form action="/logoutOne" method="POST">
+    <div class="form-group">
+        <label for="closeOne">Close Only this session</label>
+        <button type="submit" class="btn btn-primary">Logout</button>
+    </div>
+</form>
+<br>
+<form action="/logoutAll" method="POST">
+    <div class="form-group">
+        <label for="closeAll">Close All sessions</label>
+        <button type="submit" class="btn btn-secondary">Logout</button>
+    </div>
+</form>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,22 @@
+<%- include("partials/header"); -%>
+
+<h2>Welcome Customers</h2>
+<table class="table table-stripped">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Customer ID</th>
+            <th scope="col">Customer Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% customers.forEach(function(customer) {  %>
+            <tr>
+                <td><%= customer.customer_id %></td>
+                <td><%= customer.customer_name %></td>
+            </tr>
+            <% }) %>
+    </tbody>
+</table>
+
+
+<%- include("partials/footer"); -%>
