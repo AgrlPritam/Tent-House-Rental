@@ -20,7 +20,7 @@
               <% products.forEach(function(product) {  %>
               <ul>
                 <li><%= product.product_title %></li>
-                <input type="number" min=0 oninput="validity.valid||(value='')" class="form-control" name="<%= product.product_id %>" >
+                <input type="number" min=0 oninput="validity.valid||(value='')" class="form-control" name="product" >
               </ul>
               <% }) %>
               

@@ -15,12 +15,14 @@ const transactionSchema = new mongoose.Schema({
     },
     customer_id: {
         type: Number || mongoose.Schema.Types.ObjectId,
-        required: true,
+        default: Math.floor((Math.random()*1000000)+1),
+        unique: true,
         ref:'Customer'
     },
     product_id: {
         type: Number || mongoose.Schema.Types.ObjectId,
-        required:true,
+        default: Math.floor((Math.random()*1000000)+1),
+        unique: true,
         ref: 'Product'
     },
     transaction_type:{

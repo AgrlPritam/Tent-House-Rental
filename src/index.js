@@ -1,14 +1,10 @@
 require('dotenv').config()
 const express = require('express')
 require('./db/mongoose')
-const mongoose = require('mongoose')
 const ejs = require("ejs")
-const bcrypt = require('bcrypt')
 const userApp = require('./routers/user')
 
-
 const app = express()
-
 app.use(express.static("public"))
 app.set('view engine', 'ejs')
 

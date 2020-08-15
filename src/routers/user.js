@@ -51,7 +51,7 @@ app.get('/product', async (req,res) => {
 })
 
 app.get('/transact', async (req,res) => {
-    await Product.find({},'product_title product_id', function(err, products) {
+    await Product.find({},'product_title', function(err, products) {
         res.render("transact", {
             products:products
         })
@@ -68,9 +68,25 @@ app.get('/transaction',async (req,res) => {
 
 app.post('/transact',async (req,res) => {
     const jsonString = JSON.stringify(req.body,null)
-    const text = JSON.parse(jsonString)
-    console.log(text)
-    res.redirect('/transaction')
+    const parsedJSON = JSON.parse(jsonString)
+    value = 0
+    for(i=0;i<parsedJSON.product.length;i++){
+        value += +parsedJSON.product[i]
+    }
+    typeTransaction = (parsedJSON.state == 'rent') ? "OUT" : "IN";
+        const newTransaction = new Transaction({
+            transaction_type:typeTransaction,
+            quantity: value
+        })
+        try {
+            await newTransaction.save()
+            res.status(201).redirect("/transaction")
+        } catch (e) {
+            console.log(e)
+            res.status(404).render("404",{
+                error: "Error while transacting"
+            })
+        }
 })
 
 //API Only (use Postman)
