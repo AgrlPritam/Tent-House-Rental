@@ -9,12 +9,13 @@ const customerSchema = new mongoose.Schema({
         unique: true
     },
     customer_name: {
-        type: String || mongoose.Schema.Types.ObjectId,
+        type: String || mongoose.Schema.Types.ObjectId,     //Currently adding database through an API. Meant to store objectID of user registered previously
         required:true,
         ref: 'User'
     }
 },{toJSON:{virtuals:true}})
 
+//For customerID virtual link to transaction table
 customerSchema.virtual('transactions',{
     ref:'Transaction',
     localField:'customer_id',

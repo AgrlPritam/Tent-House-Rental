@@ -42,6 +42,7 @@ const productSchema = new mongoose.Schema({
     }
 },{toJSON:{virtuals:true}})
 
+//For linking product_id for virtual connection to transaction table. Currently feature disabled
 productSchema.virtual('transactions',{
     ref:'Transaction',
     localField:'product_id',

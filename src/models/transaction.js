@@ -6,7 +6,7 @@ const validator = require('validator')
 const transactionSchema = new mongoose.Schema({
     transaction_id: {
         type: String,
-        default: shortid.generate,
+        default: shortid.generate,      //For generating short transaction IDs
         unique: true
     },
     transaction_date_time: {
@@ -14,13 +14,13 @@ const transactionSchema = new mongoose.Schema({
         default: Date.now    
     },
     customer_id: {
-        type: Number || mongoose.Schema.Types.ObjectId,
+        type: Number || mongoose.Schema.Types.ObjectId,     //Link to customer ID. Feature not complete yet so accepting inputs from API
         default: Math.floor((Math.random()*1000000)+1),
         unique: true,
         ref:'Customer'
     },
     product_id: {
-        type: Number || mongoose.Schema.Types.ObjectId,
+        type: Number || mongoose.Schema.Types.ObjectId,     //Same functionality as customer_id
         default: Math.floor((Math.random()*1000000)+1),
         unique: true,
         ref: 'Product'

@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
         required: true,
         trim: true,
         lowercase: true,
-        validate(value) {
+        validate(value) {       //valid email check
             if (!validator.isEmail(value)) {
                 throw new Error('Email is invalid')
             }
@@ -28,13 +28,13 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: 8,
         trim: true,
-        validate(value) {
+        validate(value) {       //avoiding weak password
             if (value.toLowerCase().includes('password')) {
                 throw new Error('Password cannot contain "password"')
             }
         }
     },
-    tokens: [{
+    tokens: [{              //creating jaw tokens for each login. Can be used for multiple sessions by one user
         token: {
             type: String,
             required: true
@@ -42,23 +42,24 @@ const userSchema = new mongoose.Schema({
     }]
 })
 
-userSchema.virtual('customers',{
+userSchema.virtual('customers',{        //For linking customer name with the user name. As to be a customer one needs to register. This feature is not complete till this release to keep it open
     ref:'Customer',
     localField:'name',
     foreignField:'customer_name'
 })
 
-userSchema.methods.generateAuthToken = async function () {
+//Generating Authentication tokens using jwt
+userSchema.methods.generateAuthToken = async function () {      
     const user = this
-    const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_TOKEN, { expiresIn:60*60 })
+    const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_TOKEN, { expiresIn:60*60 })    //One session expires in 1 hr. Curently disabled as no auth checks are done for each endpoint
 
-    user.tokens = user.tokens.concat({ token })
+    user.tokens = user.tokens.concat({ token })     //Storing all login session
     await user.save()
 
     return token
 }
 
-
+//User Login Authentication
 userSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne({ email })
 
@@ -72,6 +73,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
     return user
 }
 
+//Future reference to any password change and linking to current password hashing algorithm
 userSchema.pre('save', async function (next) {
     const user = this
 

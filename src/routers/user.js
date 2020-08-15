@@ -7,20 +7,22 @@ const auth = require('../middleware/auth')
 
 const app = express()
 
-const content = "Mo Gruhasti is a startup growing under the umbrella of its customers who love us and our services";
+//Random starting content
+const content = "Mo Gruhasti is a startup growing under the umbrella of its customers who love us and our services. We serve all across the state of Odisha as of now and soon coming to your city. Stay connected for more updates.";
 
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
-
-app.get('/register', (req,res) => {
-    res.render("register")
-})
 
 app.get('/', (req,res) => {
     res.render('home',{
         startingContent: content
     })
 })
+
+app.get('/register', (req,res) => {
+    res.render("register")
+})
+
 app.post('/register', async (req, res) => {
     const newUser = new User({
         name: req.body.name,
@@ -30,7 +32,7 @@ app.post('/register', async (req, res) => {
 
     try {
         await newUser.save()
-        const token = await newUser.generateAuthToken()
+        const token = await newUser.generateAuthToken()     //Awaiting token generation
         res.status(201).render("success",{
             eventDone: "Registered"
         })
@@ -42,15 +44,17 @@ app.post('/register', async (req, res) => {
     }
 })
 
+//Products
 app.get('/product', async (req,res) => {
     await Product.find({},'product_id product_title quantity_total', function(err, products) {
         res.render("product", {
             products:products
         })
-    }).sort({product_title:1})
+    }).sort({product_title:1})      //Sorting in ascending order based on title
 })
 
-app.get('/transact', async (req,res) => {
+//Rental or Return Page for transaction to be done
+app.get('/transact', async (req,res) => {           //auth route can be added for indivdual user access
     await Product.find({},'product_title', function(err, products) {
         res.render("transact", {
             products:products
@@ -58,22 +62,25 @@ app.get('/transact', async (req,res) => {
     })
 })
 
-app.get('/transaction',async (req,res) => {
+//Landing page post transaction is done
+app.get('/transaction',async (req,res) => {         //auth route can be added for user specific data viewing
     await Transaction.find({},'transaction_id transaction_date_time transaction_type quantity', function(err, transactions){
         res.render("transaction", {
             transactions:transactions
         })
-    }).sort({transaction_date_time:-1})
+    }).sort({transaction_date_time:-1})     //Descending order based on timestamp
 })
 
-app.post('/transact',async (req,res) => {
+//Making a transaction. Updates transactions table. Extra functionality for updating product table can be added by parsing the JSON response and updating each row in table
+//Check transact.ejs
+app.post('/transact',async (req,res) => {           //auth route can be added for user specific data viewing
     const jsonString = JSON.stringify(req.body,null)
     const parsedJSON = JSON.parse(jsonString)
     value = 0
     for(i=0;i<parsedJSON.product.length;i++){
-        value += +parsedJSON.product[i]
+        value += +parsedJSON.product[i]       //Converting String type JSON values to integer for storing total transaction quantity
     }
-    typeTransaction = (parsedJSON.state == 'rent') ? "OUT" : "IN";
+    typeTransaction = (parsedJSON.state == 'rent') ? "OUT" : "IN";  
         const newTransaction = new Transaction({
             transaction_type:typeTransaction,
             quantity: value
@@ -89,8 +96,8 @@ app.post('/transact',async (req,res) => {
         }
 })
 
-//API Only (use Postman)
-app.post('/transaction',async (req,res) => {
+//API Only (use Postman). Additional feature alongwith above to add data in transaction table
+app.post('/transaction', async (req,res) => {       //auth route can be added for user specific data viewing
     const addTransaction = new Transaction(req.body)
     try {
         await addTransaction.save()
@@ -100,7 +107,7 @@ app.post('/transaction',async (req,res) => {
     }
 })
 
-
+//check customer.ejs
 app.get('/customer', async (req,res) => {
     await Customer.find({},'customer_id customer_name', function(err, customers) {
         res.render("customer", {
@@ -109,10 +116,12 @@ app.get('/customer', async (req,res) => {
     }).sort({customer_name:1})
 })
 
+//Check login.ejs
 app.get('/login', (req,res) => {
     res.status(200).render("login")
 })
 
+//login post method. Accepts email and password. Verifies token and password for login.
 app.post('/login', async (req, res) => {
     try {
         const user = await User.findByCredentials(req.body.username, req.body.password)
@@ -128,11 +137,13 @@ app.post('/login', async (req, res) => {
     }
 })
 
+//Logout route handler
 app.get('/logout', (req,res) => {
     res.status(200).render("logout")
 })
 
-app.post('/logoutOne',auth, async(req,res) => {
+//Currently both logoutOne and logoutAll complete handler is non-functional as auth route needs to be handled
+app.post('/logoutOne',/*auth,*/ async(req,res) => {
     try {
         req.user.tokens = req.user.tokens.filter((token) => {
             return token.token !== req.token            
@@ -146,7 +157,7 @@ app.post('/logoutOne',auth, async(req,res) => {
     }
 })
 
-app.post('/logoutAll',auth, async (req, res) => {
+app.post('/logoutAll',/*auth,*/ async (req, res) => {
     try {
         req.user.tokens = []
         await req.user.save()
