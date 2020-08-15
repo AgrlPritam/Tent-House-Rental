@@ -70,7 +70,7 @@ app.get('/transaction',async (req,res) => {
         res.render("transaction", {
             transactions:transactions
         })
-    })
+    }).sort({transaction_date_time:-1})
 })
 
 //API Only (use Postman)
