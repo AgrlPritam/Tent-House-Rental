@@ -50,7 +50,7 @@ userSchema.virtual('customers',{
 
 userSchema.methods.generateAuthToken = async function () {
     const user = this
-    const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_TOKEN)
+    const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_TOKEN, { expiresIn:60*60 })
 
     user.tokens = user.tokens.concat({ token })
     await user.save()
@@ -58,15 +58,16 @@ userSchema.methods.generateAuthToken = async function () {
     return token
 }
 
+
 userSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne({ email })
 
     if (!user) {
-        throw new Error('Unable to login user')
+        throw new Error('No User Found')
     }
     const isMatch = await bcrypt.compare(password, user.password)
     if (!isMatch) {
-        throw new Error('Unable to login password')
+        throw new Error('Password Mismatch')
     }
     return user
 }

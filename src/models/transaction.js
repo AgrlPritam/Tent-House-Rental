@@ -6,21 +6,20 @@ const validator = require('validator')
 const transactionSchema = new mongoose.Schema({
     transaction_id: {
         type: String,
-        required: true,
         default: shortid.generate,
         unique: true
     },
     transaction_date_time: {
         type: Date,
-        default: Date.now        
+        default: Date.now    
     },
     customer_id: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Number || mongoose.Schema.Types.ObjectId,
         required: true,
         ref:'Customer'
     },
     product_id: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Number || mongoose.Schema.Types.ObjectId,
         required:true,
         ref: 'Product'
     },

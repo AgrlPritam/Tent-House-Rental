@@ -2,16 +2,15 @@ const express = require('express')
 const User = require('../models/user')
 const Product = require('../models/product')
 const Customer = require('../models/customer')
+const Transaction = require('../models/transaction')
 const auth = require('../middleware/auth')
-const bodyParser = require("body-parser")
 
 const app = express()
 
 const content = "Mo Gruhasti is a startup growing under the umbrella of its customers who love us and our services";
 
-app.use(bodyParser.urlencoded({
-    extended: true
-}))
+app.use(express.urlencoded({extended:true}))
+app.use(express.json())
 
 app.get('/register', (req,res) => {
     res.render("register")
@@ -32,7 +31,9 @@ app.post('/register', async (req, res) => {
     try {
         await newUser.save()
         const token = await newUser.generateAuthToken()
-        res.status(201).redirect("/")
+        res.status(201).render("success",{
+            eventDone: "Registered"
+        })
     } catch (e) {
         console.log(e)
         res.status(404).render("404",{
@@ -48,6 +49,41 @@ app.get('/product', async (req,res) => {
         })
     }).sort({product_title:1})
 })
+
+app.get('/transact', async (req,res) => {
+    await Product.find({},'product_title product_id', function(err, products) {
+        res.render("transact", {
+            products:products
+        })
+    })
+})
+
+app.post('/transact',async (req,res) => {
+    //const jsonString = JSON.stringify(req.body,null)
+    //const text = JSON.parse(jsonString)
+    console.log(req.body)
+    res.redirect('/product')
+})
+
+app.get('/transaction',async (req,res) => {
+    await Transaction.find({},'transaction_id transaction_date_time transaction_type quantity', function(err, transactions){
+        res.render("transaction", {
+            transactions:transactions
+        })
+    })
+})
+
+//API Only (use Postman)
+app.post('/transaction',async (req,res) => {
+    const addTransaction = new Transaction(req.body)
+    try {
+        await addTransaction.save()
+        res.status(201).send({addTransaction})
+    } catch(e) {
+        res.status(400).send(e)
+    }
+})
+
 
 app.get('/customer', async (req,res) => {
     await Customer.find({},'customer_id customer_name', function(err, customers) {
@@ -65,7 +101,9 @@ app.post('/login', async (req, res) => {
     try {
         const user = await User.findByCredentials(req.body.username, req.body.password)
         const token = await user.generateAuthToken()
-        res.status(200).redirect("product")
+        res.status(200).render("success",{
+            eventDone:"Logged In"
+        })
     } catch (e) {
         console.log(e)
         res.status(404).render("404",{
@@ -84,9 +122,9 @@ app.post('/logoutOne',auth, async(req,res) => {
             return token.token !== req.token            
         })
         await req.user.save()
-        res.redirect("/login")
+        res.render("/login")
     }catch(e) {
-        res.redirect("404",{
+        res.render("404",{
             error:"Error logging out"
         })
     }
@@ -96,15 +134,14 @@ app.post('/logoutAll',auth, async (req, res) => {
     try {
         req.user.tokens = []
         await req.user.save()
-        res.send()
+        res.status(200).render("success",{
+            eventDone:"Logged Out"
+        })
     }catch(e) {
-        res.send(500).send()
+        res.status(500).render("404",{
+            error:"Error logging out"
+        })
     }
 })
-
-app.get("/register",function(req,res) {
-    res.render("register")
-})
-
 
 module.exports = app

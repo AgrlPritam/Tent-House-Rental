@@ -1,0 +1,37 @@
+<%- include('partials/header') %>
+
+<div class="container mt-5">
+  <h1>Rent or Return Products</h1>
+
+  <div class="row">
+    <div class="col-sm-8">
+      <div class="card">
+        <div class="card-body">
+
+          <!-- Makes POST request to /login route -->
+          <form action="/transact" method="POST">
+            <div class="form-group">
+                <input type="radio" id="rent" name="state" value="rent" checked>
+                <label for="rent">Rent</label>
+                <input type="radio" id="return" name="state" value="return">
+                <label for="return">Return</label>
+            </div>
+            <div class="form-group">
+              <% products.forEach(function(product) {  %>
+              <ul>
+                <li><%= product.product_title %></li>
+                <input type="number" min=0 oninput="validity.valid||(value='')" class="form-control" name="<%= product.product_id %>" >
+              </ul>
+              <% }) %>
+              
+
+            </div>
+            <button type="submit" class="btn btn-dark">Continue</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

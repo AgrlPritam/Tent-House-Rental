@@ -1,0 +1,26 @@
+<%- include("partials/header"); -%>
+
+<h2>Welcome to Transactions</h2>
+<table class="table table-stripped">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Transaction ID</th>
+            <th scope="col">Transaction Date</th>
+            <th scope="col">Type</th>
+            <th scope="col">Quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% transactions.forEach(function(transaction) {  %>
+            <tr>
+                <td><%= transaction.transaction_id %></td>
+                <td><%= transaction.transaction_date_time %></td>
+                <td><%= transaction.transaction_type %></td>
+                <td><%= transaction.quantity %></td>
+            </tr>
+            <% }) %>
+    </tbody>
+</table>
+
+
+<%- include("partials/footer"); -%>
