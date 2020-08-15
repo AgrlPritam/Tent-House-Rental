@@ -58,19 +58,19 @@ app.get('/transact', async (req,res) => {
     })
 })
 
-app.post('/transact',async (req,res) => {
-    //const jsonString = JSON.stringify(req.body,null)
-    //const text = JSON.parse(jsonString)
-    console.log(req.body)
-    res.redirect('/product')
-})
-
 app.get('/transaction',async (req,res) => {
     await Transaction.find({},'transaction_id transaction_date_time transaction_type quantity', function(err, transactions){
         res.render("transaction", {
             transactions:transactions
         })
     }).sort({transaction_date_time:-1})
+})
+
+app.post('/transact',async (req,res) => {
+    const jsonString = JSON.stringify(req.body,null)
+    const text = JSON.parse(jsonString)
+    console.log(text)
+    res.redirect('/transaction')
 })
 
 //API Only (use Postman)
