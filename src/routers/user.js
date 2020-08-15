@@ -53,6 +53,17 @@ app.get('/product', async (req,res) => {
     }).sort({product_title:1})      //Sorting in ascending order based on title
 })
 
+//API Only Product addition using Postman
+app.post('/product',async (req,res)=> {
+    const addProduct = new Product(req.body)
+    try {
+        await addProduct.save()
+        res.status(201).send({addProduct})
+    }catch(e) {
+        res.status(400).send(e)
+    }
+})
+
 //Rental or Return Page for transaction to be done
 app.get('/transact', async (req,res) => {           //auth route can be added for indivdual user access
     await Product.find({},'product_title', function(err, products) {
@@ -114,6 +125,17 @@ app.get('/customer', async (req,res) => {
             customers:customers
         })
     }).sort({customer_name:1})
+})
+
+//API only adding Customer using Postman
+app.post('/customer',async (req,res) => {
+    const addCustomer = new Customer(req.body)
+    try {
+        await addCustomer.save()
+        res.status(201).send({addCustomer})
+    }catch(e) {
+        res.status(400).send(e)
+    }
 })
 
 //Check login.ejs
