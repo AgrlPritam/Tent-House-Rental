@@ -16,6 +16,15 @@ You can use any text for above two variables but ensure the capitalized secret a
 9) Ensure you have installed nodeJS in your system. Link: https://nodejs.org/en/
 10) Now install all dependent packages by executing below command in terminal
      npm i 
-11) After all packages are installed in current folder, you are good to fire up the Server. Execute below:
+11) Download and install mongodb Atlas in your system and define the bash_profile to use mongod and mongo aliases for ease of bringing up the database.
+12) After all packages are installed in current folder, and mongodb is up, you are good to fire up the Server. Execute below:
     npm run dev
-12) Wait till you get a response "Server is up on port 3000"
+13) Wait till you get a response "Server is up on port 3000"
+
+Software involved and required:
+1)Git
+2)IDE
+3)Mongodb Atlas
+4)Robo3T (optional for data viewing)
+5)Postman (optional for APIs)
+6)NodeJS
