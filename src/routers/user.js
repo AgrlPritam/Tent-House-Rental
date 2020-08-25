@@ -1,5 +1,5 @@
 const express = require('express')
-const User = require('../models/user')
+const {User} = require('../models/user')
 const Product = require('../models/product')
 const Customer = require('../models/customer')
 const Transaction = require('../models/transaction')
@@ -33,6 +33,7 @@ app.post('/register', async (req, res) => {
     try {
         await newUser.save()
         const token = await newUser.generateAuthToken()     //Awaiting token generation
+        res.cookie('auth_token',token)
         res.status(201).render("success",{
             eventDone: "Registered"
         })
@@ -119,7 +120,7 @@ app.post('/transaction', async (req,res) => {       //auth route can be added fo
 })
 
 //check customer.ejs
-app.get('/customer', async (req,res) => {
+app.get('/customer',auth, async (req,res) => {
     await Customer.find({},'customer_id customer_name', function(err, customers) {
         res.render("customer", {
             customers:customers
@@ -148,6 +149,7 @@ app.post('/login', async (req, res) => {
     try {
         const user = await User.findByCredentials(req.body.username, req.body.password)
         const token = await user.generateAuthToken()
+        res.cookie('auth_token', token)
         res.status(200).render("success",{
             eventDone:"Logged In"
         })
@@ -160,18 +162,18 @@ app.post('/login', async (req, res) => {
 })
 
 //Logout route handler
-app.get('/logout', (req,res) => {
+app.get('/logout',auth, (req,res) => {
     res.status(200).render("logout")
 })
 
 //Currently both logoutOne and logoutAll complete handler is non-functional as auth route needs to be handled
-app.post('/logoutOne',/*auth,*/ async(req,res) => {
+app.post('/logoutOne',auth, async(req,res) => {
     try {
         req.user.tokens = req.user.tokens.filter((token) => {
             return token.token !== req.token            
         })
         await req.user.save()
-        res.render("/login")
+        res.redirect("/login")
     }catch(e) {
         res.render("404",{
             error:"Error logging out"
@@ -179,7 +181,7 @@ app.post('/logoutOne',/*auth,*/ async(req,res) => {
     }
 })
 
-app.post('/logoutAll',/*auth,*/ async (req, res) => {
+app.post('/logoutAll',auth, async (req, res) => {
     try {
         req.user.tokens = []
         await req.user.save()
